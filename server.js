@@ -2,9 +2,9 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-const Task = require('./task');
-const Project = require('./project');
-const User = require('./user');
+const Task = require('./src/models/task');
+const Project = require('./src/models/project');
+const User = require('./src/models/user');
 
 app.use(express.json());
 
