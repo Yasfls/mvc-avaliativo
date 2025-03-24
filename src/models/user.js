@@ -1,4 +1,4 @@
-const user = []
+const users = []
 
 class User {
     constructor(id, nome, email, senha) {

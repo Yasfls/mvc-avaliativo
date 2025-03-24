@@ -2,39 +2,38 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+const Task = require('./task');
+const Project = require('./project');
+const User = require('./user');
+
 app.use(express.json());
 
-let tasks = [];
-let users = [];
-let projects = [];
-
 // Rotas para tarefas (tasks)
-app.post('/tasks', (req, res) => {
-  const task = req.body;
-  tasks.push(task);
+app.post('/task', (req, res) => {
+  const { id, titulo, status, userId, projectId } = req.body;
+  const task = new Task(id, titulo, status, userId, projectId);
+  task.save();
   res.status(201).send(task);
 });
 
-app.put('/tasks/:id', (req, res) => {
+app.put('/task/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  const index = tasks.findIndex(task => task.id === id);
-  if (index !== -1) {
-    tasks[index] = req.body;
-    res.send(tasks[index]);
+  const updatedTask = Task.updateById(id, req.body);
+  if (updatedTask) {
+    res.send(updatedTask);
   } else {
     res.status(404).send({ message: 'Task not found' });
   }
 });
 
-app.get('/tasks', (req, res) => {
-  res.send(tasks);
+app.get('/task', (req, res) => {
+  res.send(Task.fetchAll());
 });
 
-app.delete('/tasks/:id', (req, res) => {
+app.delete('/task/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  const index = tasks.findIndex(task => task.id === id);
-  if (index !== -1) {
-    tasks.splice(index, 1);
+  const success = Task.deleteById(id);
+  if (success) {
     res.status(204).send();
   } else {
     res.status(404).send({ message: 'Task not found' });
@@ -42,32 +41,31 @@ app.delete('/tasks/:id', (req, res) => {
 });
 
 // Rotas para usuários (users)
-app.post('/users', (req, res) => {
-  const user = req.body;
-  users.push(user);
+app.post('/user', (req, res) => {
+  const { id, nome, email, senha } = req.body;
+  const user = new User(id, nome, email, senha);
+  user.save();
   res.status(201).send(user);
 });
 
-app.put('/users/:id', (req, res) => {
+app.put('/user/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  const index = users.findIndex(user => user.id === id);
-  if (index !== -1) {
-    users[index] = req.body;
-    res.send(users[index]);
+  const updatedUser = User.updateById(id, req.body);
+  if (updatedUser) {
+    res.send(updatedUser);
   } else {
     res.status(404).send({ message: 'User not found' });
   }
 });
 
-app.get('/users', (req, res) => {
-  res.send(users);
+app.get('/user', (req, res) => {
+  res.send(User.fetchAll());
 });
 
-app.delete('/users/:id', (req, res) => {
+app.delete('/user/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  const index = users.findIndex(user => user.id === id);
-  if (index !== -1) {
-    users.splice(index, 1);
+  const success = User.deleteById(id);
+  if (success) {
     res.status(204).send();
   } else {
     res.status(404).send({ message: 'User not found' });
@@ -75,32 +73,31 @@ app.delete('/users/:id', (req, res) => {
 });
 
 // Rotas para projetos (projects)
-app.post('/projects', (req, res) => {
-  const project = req.body;
-  projects.push(project);
+app.post('/project', (req, res) => {
+  const { id, nome, descricao } = req.body;
+  const project = new Project(id, nome, descricao);
+  project.save();
   res.status(201).send(project);
 });
 
-app.put('/projects/:id', (req, res) => {
+app.put('/project/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  const index = projects.findIndex(project => project.id === id);
-  if (index !== -1) {
-    projects[index] = req.body;
-    res.send(projects[index]);
+  const updatedProject = Project.updateById(id, req.body);
+  if (updatedProject) {
+    res.send(updatedProject);
   } else {
     res.status(404).send({ message: 'Project not found' });
   }
 });
 
-app.get('/projects', (req, res) => {
-  res.send(projects);
+app.get('/project', (req, res) => {
+  res.send(Project.fetchAll());
 });
 
-app.delete('/projects/:id', (req, res) => {
+app.delete('/project/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  const index = projects.findIndex(project => project.id === id);
-  if (index !== -1) {
-    projects.splice(index, 1);
+  const success = Project.deleteById(id);
+  if (success) {
     res.status(204).send();
   } else {
     res.status(404).send({ message: 'Project not found' });

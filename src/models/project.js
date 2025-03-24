@@ -1,4 +1,4 @@
-const project = []
+const projects = []
 
 class Project {
     constructor(id, nome, descricao) {

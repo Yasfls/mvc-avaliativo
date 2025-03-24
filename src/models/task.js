@@ -1,39 +1,39 @@
-const task = []
+let tasks = [];
 
 class Task {
     constructor(id, titulo, status, userId, projectId) {
-        this.id = id
-        this.titulo = titulo
-        this.status = status
-        this.userId = userId
-        this.projectId = projectId
+        this.id = id;
+        this.titulo = titulo;
+        this.status = status;
+        this.userId = userId;
+        this.projectId = projectId;
     }
 
     save() {
-        tasks.push(this)
+        tasks.push(this);
     }
 
     static fetchAll() {
-        return tasks
+        return tasks;
     }
 
     static deleteById(id) {
-        const task = this.data.find(task => task.id === id)
-        if (task !== -1) {
-            this.data.splice(task, 1)
-            return true
+        const index = tasks.findIndex(task => task.id === id);
+        if (index !== -1) {
+            tasks.splice(index, 1);
+            return true;
         }
-        return false
+        return false;
     }
 
     static updateById(id, newData) {
-        const task = this.data.find(task => task.id === id)
+        const task = tasks.find(task => task.id === id);
         if (task) {
-            Object.assign(task, newData)
-            return task
+            Object.assign(task, newData);
+            return task;
         }
-        return null
+        return null;
     }
 }
 
-module.exports = Task
+module.exports = Task;
