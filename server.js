@@ -8,7 +8,6 @@ const User = require('./src/models/user');
 
 app.use(express.json());
 
-// Rotas para tarefas (tasks)
 app.post('/task', (req, res) => {
   const { id, titulo, status, userId, projectId } = req.body;
   const task = new Task(id, titulo, status, userId, projectId);
@@ -40,7 +39,6 @@ app.delete('/task/:id', (req, res) => {
   }
 });
 
-// Rotas para usuários (users)
 app.post('/user', (req, res) => {
   const { id, nome, email, senha } = req.body;
   const user = new User(id, nome, email, senha);
@@ -72,7 +70,6 @@ app.delete('/user/:id', (req, res) => {
   }
 });
 
-// Rotas para projetos (projects)
 app.post('/project', (req, res) => {
   const { id, nome, descricao } = req.body;
   const project = new Project(id, nome, descricao);
