@@ -1,44 +1,20 @@
-const Task = require('../models/task')
+const Task = require('../models/task');
 
-class TaskController {
-    static insert(req, res) {
-        const { id, titulo, status, userId, projectId} = req.body
+exports.create = async (req, res) => {
+  const { title, description, userId, projectId } = req.body;
+  try {
+    const task = await Task.create({ title, description, userId, projectId });
+    res.status(201).json(task);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao criar tarefa.' });
+  }
+};
 
-        const task = new Task(id, titulo, status, userId, projectId)
-        task.save()
-
-        res.status(201).json(task)
-    }
-
-    static findAll(req, res) {
-        const tasks = Task.fetchAll()
-
-        res.json(tasks)
-    }
-
-    static delete(req, res) {
-        const { id } = req.params
-        const deleted = Task.deleteById(id)
-
-        if (deleted) {
-            res.status(200).json({ message: 'Tarefa deletada' })
-        } else {
-            res.status(404).json({ message: 'Tarefa não encontrada' })
-        }
-    }
-
-    static update(req, res) {
-        const { id } = req.params
-        const { titulo, status, userId, projectId} = req.body
-
-        const updated = Task.updateById(id, { titulo, status, userId, projectId})
-
-        if (updated) {
-            res.status(200).json({ message: 'Tarefa atualizada', task: updated })
-        } else {
-            res.status(404).json({ message: 'Tarefa não encontrada' })
-        }
-    }
-}
-
-module.exports = TaskController
+exports.list = async (req, res) => {
+  try {
+    const tasks = await Task.findAll();
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar tarefas.' });
+  }
+};

@@ -1,106 +1,28 @@
 const express = require('express');
+const sequelize = require('./config/database');
+const User = require('./models/user');
+const Project = require('./models/project');
+const Task = require('./models/task');
+const userController = require('./src/controllers/userController');
+const projectController = require('./src/controllers/projectController');
+const taskController = require('./src/controllers/taskController');
+
 const app = express();
-const port = 3000;
-
-const Task = require('./src/models/task');
-const Project = require('./src/models/project');
-const User = require('./src/models/user');
-
 app.use(express.json());
 
-app.post('/task', (req, res) => {
-  const { id, titulo, status, userId, projectId } = req.body;
-  const task = new Task(id, titulo, status, userId, projectId);
-  task.save();
-  res.status(201).send(task);
-});
+sequelize.sync({ force: false })
+  .then(() => console.log('Tabelas sincronizadas.'))
+  .catch(err => console.error('Erro ao sincronizar:', err));
 
-app.put('/task/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const updatedTask = Task.updateById(id, req.body);
-  if (updatedTask) {
-    res.send(updatedTask);
-  } else {
-    res.status(404).send({ message: 'Task not found' });
-  }
-});
+app.post('/api/users', userController.register);
+app.post('/api/login', userController.login);
 
-app.get('/task', (req, res) => {
-  res.send(Task.fetchAll());
-});
+app.post('/api/projects', projectController.create);
+app.get('/api/projects', projectController.list);
 
-app.delete('/task/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const success = Task.deleteById(id);
-  if (success) {
-    res.status(204).send();
-  } else {
-    res.status(404).send({ message: 'Task not found' });
-  }
-});
+app.post('/api/tasks', taskController.create);
+app.get('/api/tasks', taskController.list);
 
-app.post('/user', (req, res) => {
-  const { id, nome, email, senha } = req.body;
-  const user = new User(id, nome, email, senha);
-  user.save();
-  res.status(201).send(user);
-});
-
-app.put('/user/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const updatedUser = User.updateById(id, req.body);
-  if (updatedUser) {
-    res.send(updatedUser);
-  } else {
-    res.status(404).send({ message: 'User not found' });
-  }
-});
-
-app.get('/user', (req, res) => {
-  res.send(User.fetchAll());
-});
-
-app.delete('/user/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const success = User.deleteById(id);
-  if (success) {
-    res.status(204).send();
-  } else {
-    res.status(404).send({ message: 'User not found' });
-  }
-});
-
-app.post('/project', (req, res) => {
-  const { id, nome, descricao } = req.body;
-  const project = new Project(id, nome, descricao);
-  project.save();
-  res.status(201).send(project);
-});
-
-app.put('/project/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const updatedProject = Project.updateById(id, req.body);
-  if (updatedProject) {
-    res.send(updatedProject);
-  } else {
-    res.status(404).send({ message: 'Project not found' });
-  }
-});
-
-app.get('/project', (req, res) => {
-  res.send(Project.fetchAll());
-});
-
-app.delete('/project/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const success = Project.deleteById(id);
-  if (success) {
-    res.status(204).send();
-  } else {
-    res.status(404).send({ message: 'Project not found' });
-  }
-});
-
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
+app.listen(3000, () => {
+  console.log('Servidor rodando em: http://localhost:3000 🚀');
 });

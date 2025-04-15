@@ -1,37 +1,8 @@
-const projects = []
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-class Project {
-    constructor(id, nome, descricao) {
-        this.id = id
-        this.nome = nome
-        this.descricao = descricao
-    }
+const Project = sequelize.define('Project', {
+  name: { type: DataTypes.STRING, allowNull: false }
+});
 
-    save() {
-        projects.push(this)
-    }
-
-    static fetchAll() {
-        return projects
-    }
-
-    static deleteById(id) {
-        const project = this.data.find(project => project.id === id)
-        if (project !== -1) {
-            this.data.splice(project, 1)
-            return true
-        }
-        return false
-    }
-
-    static updateById(id, newData) {
-        const project = this.data.find(project => project.id === id)
-        if (project) {
-            Object.assign(project, newData)
-            return project
-        }
-        return null
-    }
-}
-
-module.exports = Project
+module.exports = Project;

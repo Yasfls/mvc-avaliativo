@@ -1,44 +1,32 @@
-const User = require('../models/user')
+const User = require('../models/user');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-class UserController {
-    static insert(req, res) {
-        const { id, nome, email, senha } = req.body
+const saltRounds = 10;
 
-        const user = new User(id, nome, email, senha)
-        user.save()
+exports.register = async (req, res) => {
+  const { name, email, password } = req.body;
+  try {
+    const hash = await bcrypt.hash(password, saltRounds);
+    const user = await User.create({ name, email, password: hash });
+    res.status(201).json({ message: 'Usuário registrado com sucesso!', user });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao registrar usuário.' });
+  }
+};
 
-        res.status(201).json(user)
-    }
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ where: { email } });
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado.' });
 
-    static findAll(req, res) {
-        const users = User.fetchAll()
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) return res.status(401).json({ error: 'Senha inválida.' });
 
-        res.json(users)
-    }
-
-    static delete(req, res) {
-        const { id } = req.params
-        const deleted = User.deleteById(id)
-
-        if (deleted) {
-            res.status(200).json({ message: 'Usuário deletado' })
-        } else {
-            res.status(404).json({ message: 'Usuário não encontrado' })
-        }
-    }
-
-    static update(req, res) {
-        const { id } = req.params
-        const { nome, email, senha } = req.body
-
-        const updated = User.updateById(id, { nome, email, senha })
-
-        if (updated) {
-            res.status(200).json({ message: 'Usuário atualizado', user: updated })
-        } else {
-            res.status(404).json({ message: 'Usuário não encontrado' })
-        }
-    }
-}
-
-module.exports = UserController
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.json({ message: 'Login bem-sucedido!', token });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro no login.' });
+  }
+};

@@ -1,44 +1,20 @@
-const Project = require('../models/project')
+const Project = require('../models/project');
 
-class ProjectController {
-    static insert(req, res) {
-        const { id, nome, descricao} = req.body
+exports.create = async (req, res) => {
+  try {
+    const project = await Project.create({ name: req.body.name });
+    res.status(201).json(project);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao criar projeto.' });
+  }
+};
 
-        const project = new Project(id, nome, descricao)
-        project.save()
+exports.list = async (req, res) => {
+  try {
+    const projects = await Project.findAll();
+    res.json(projects);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar projetos.' });
+  }
+};
 
-        res.status(201).json(project)
-    }
-
-    static findAll(req, res) {
-        const projects = Project.fetchAll()
-
-        res.json(projects)
-    }
-
-    static delete(req, res) {
-        const { id } = req.params
-        const deleted = Project.deleteById(id)
-
-        if (deleted) {
-            res.status(200).json({ message: 'Projeto deletado' })
-        } else {
-            res.status(404).json({ message: 'Projeto não encontrado' })
-        }
-    }
-
-    static update(req, res) {
-        const { id } = req.params
-        const { nome, email, descricao} = req.body
-
-        const updated = Project.updateById(id, { nome, descricao})
-
-        if (updated) {
-            res.status(200).json({ message: 'Projeto atualizado', project: updated })
-        } else {
-            res.status(404).json({ message: 'Projeto não encontrado' })
-        }
-    }
-}
-
-module.exports = ProjectController
