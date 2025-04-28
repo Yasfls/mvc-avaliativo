@@ -1,21 +1,22 @@
 const Sequelize = require('sequelize');
+require('dotenv').config();
 
 class Database {
-    constructor() {
-        this.init();
-    }
+    constructor() {
+        this.init();
+    }
 
-    init() {
-        this.db = new Sequelize(
-            'mvc_avaliativo',
-            'postgres-mvc',
-            'postgres',
-            { 
-                host: 'localhost', 
-                dialect: 'mysql'
-            }
-        );
-    }
+    init() {
+        this.db = new Sequelize(
+            process.env.DB_NAME,
+            process.env.DB_USER,
+            process.env.DB_PASSWORD,
+            { 
+                host: process.env.DB_HOST,
+                dialect: 'mysql'
+            }
+        );
+    }
 }
 
 module.exports = new Database();
