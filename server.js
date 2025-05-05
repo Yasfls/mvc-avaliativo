@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.send({ response: 'Hello World!' });
+ res.send({ response: 'Hello World!' });
 });
 
 app.post('/api/login', UserController.login);
@@ -33,11 +33,11 @@ app.put('/api/tasks/:id', TaskController.update);
 app.delete('/api/tasks/:id', TaskController.delete);
 
 database.db.sync({ force: false }) // Use force: false para não recriar tabelas existentes
-    .then(() => {
-        app.listen(3000, () => {
-            console.log('Server is running on port 3000 🚀');
-        });
-    })
-    .catch((error) => {
-        console.error('Error connecting to the database', error);
-    });
+ .then(() => {
+ app.listen(3000, () => {
+ console.log('Server is running on port 3000 🚀');
+ });
+ })
+ .catch((error) => {
+ console.error('Error connecting to the database', error);
+ });
